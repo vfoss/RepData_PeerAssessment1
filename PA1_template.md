@@ -19,7 +19,7 @@ activity <- read.csv("activity.csv", colClasses=c("numeric","Date","numeric"),
 ```r
 allsteps <- tapply(activity$steps, activity$date, sum, na.rm=TRUE)
 ```
-
+  
 2. Make a histogram of the total number of steps taken each day
 
 ```r
@@ -48,8 +48,26 @@ median(allsteps)
 ```
 
 ## What is the average daily activity pattern?
+1. Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
+```r
+stepintervals <- tapply(activity$steps,activity$interval,mean,na.rm=TRUE)
 
+plot(names(stepintervals), stepintervals, type="l", 
+           xlab="5-minute Interval", ylab="Average Number of Steps Taken")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
+  
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+```r
+as.numeric(names(stepintervals)[which.max(stepintervals)])
+```
+
+```
+## [1] 835
+```
 
 ## Imputing missing values
 
