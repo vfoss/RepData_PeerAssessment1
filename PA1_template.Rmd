@@ -23,6 +23,7 @@ activity <- read.csv("activity.csv", colClasses=c("numeric","Date","numeric"),
 allsteps <- tapply(activity$steps, activity$date, sum, na.rm=TRUE)
 ```
   
+  
 2. Make a histogram of the total number of steps taken each day
 ```{r}
 hist(allsteps, xlab="Total Number of Steps taken per Day")
@@ -45,6 +46,7 @@ stepintervals <- tapply(activity$steps,activity$interval,mean,na.rm=TRUE)
 plot(names(stepintervals), stepintervals, type="l", 
            xlab="5-minute Interval", ylab="Average Number of Steps Taken")
 ```
+  
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 ```{r}
 as.numeric(names(stepintervals)[which.max(stepintervals)])
@@ -59,12 +61,49 @@ sum(!complete.cases(activity))
 ```
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+```{r}
+activity2<-activity
 
+for (n in 1:nrow(activity2)) if (is.na(activity2[n,1]))
+        activity2[n,1]<-as.numeric(stepintervals[as.character(activity2[n,3])])
+```
+  
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+```{r}
+## Show head of original dataset
+head(activity,10)
+```
+
+```{r}
+## Show head of new dataset
+head(activity2,10)
+```
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+```{r}
+allsteps2 <- tapply(activity2$steps, activity2$date, sum, na.rm=TRUE)
+```
 
+```{r}
+hist(allsteps2, xlab="Total Number of Steps taken per Day")
+```
 
+```{r}
+mean(allsteps2)
+```
+
+```{r}
+median(allsteps2)
+```
+
+  
+Yes this histogram, mean and median values differ from the earlier estimates. This is because there are a number of days in the orignal dataset where, because of missing data, the total number of steps reported is 0, as you can see below:  
+```{r}
+head(data.frame(totalsteps=allsteps),10)
+```  
+  
+The impact, therefore, of imputing missing data on the estimates of the total daily number of steps is to replace these extreme values (0) that are almost certainly inaccurate with more probable data (by replacing all the original NA values with the mean number of steps calculated for that particular 5-minute interval from all of the days where the data was not missing).  
+  
 ## Are there differences in activity patterns between weekdays and weekends?
 
 For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
