@@ -109,5 +109,28 @@ The impact, therefore, of imputing missing data on the estimates of the total da
 For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
 
 1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+```{r}
+require(Hmisc)
 
-2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+for (n in 1:nrow(activity2)) {
+        if (weekdays(activity2[n,2]) %in% c("Monday","Tuesday","Wednesday",
+                                            "Thursday","Friday"))
+                activity2[n,4] <- "weekday"
+        
+        if (weekdays(activity2[n,2]) %in% c("Saturday","Sunday"))
+                activity2[n,4] <- "weekend"
+}
+
+activity2$V4 <- as.factor(activity2$V4)
+```
+
+2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
+```{r}
+require(ggplot2)
+
+ggplot(activity2) +
+        aes(interval,steps) +
+        stat_summary(fun.y = "mean",geom = "line") +
+        facet_wrap(~ V4,nrow = 2) + xlab("5-minute Interval") + 
+        ylab("Average Number of Steps Taken")
+```
